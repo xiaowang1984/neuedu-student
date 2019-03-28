@@ -1,5 +1,5 @@
 <template>
-    <div v-html="description"></div>
+    <div id="a" v-html="des"></div>
 </template>
 
 <script>
@@ -7,6 +7,19 @@
         name: "description",
         props:{
           description:String
+        },
+        computed:{
+          des(){
+           var $div = $("<div></div>").append($(this.description));
+            $div.find("img").each(function(index,element){
+              $(element).attr("src",resourcePath+$(element).attr("src"));
+            });
+
+            return  $div.html();
+          }
+        },
+      mounted(){
+
         }
     }
 </script>

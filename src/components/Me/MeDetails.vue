@@ -60,7 +60,7 @@
               Bus.$emit("flush",true);
               Bus.$emit("val",0);
             }else{
-              this.entry=data;
+              this.entry=data.message;
             }
           });
         },

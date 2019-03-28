@@ -16,6 +16,7 @@
             <th>推荐方式</th>
             <th>OFFER</th>
             <th>最终去向</th>
+            <th></th>
           </tr>
           </thead>
           <tbody id="interview_list">
@@ -32,7 +33,7 @@
                   <a href="javascript:void(0)" @click="read(employment.id)">查阅</a>
                 </template>
                 <template v-else>
-                  <a href="#" @click="edit(employment.id)" class="add_link add_offer_link">添加</a>
+                  <a href="javascript:void(0)" @click="edit(employment.id)" class="add_link add_offer_link">添加</a>
                 </template>
               </td>
               <td class="go_direction">
@@ -44,6 +45,12 @@
                     <label class="set_time_input" @click="setTime(employment.id)">设置时间</label>
                   </label>
                 </template>
+              </td>
+              <td>
+                <template v-if="employment.choice==1">
+                  <span style="font-size:12px">{{employment.offerDate}}</span>
+                </template>
+
               </td>
             </tr>
           </tbody>
@@ -407,7 +414,7 @@
         })
 
       if( document.querySelector(".add_offer_link")){
-          document.querySelector(".add_offer_link").addEventListener('click',function(e){
+          $(".add_offer_link").click(function(e){
             e.preventDefault();
             offer_modal.show();
           });

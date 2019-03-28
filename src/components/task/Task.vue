@@ -23,7 +23,6 @@
               Bus.$emit("flush",true);
               Bus.$emit("val",0);
             }else{
-              console.log(data);
               this.works=data;
             }
           });

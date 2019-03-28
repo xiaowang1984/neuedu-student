@@ -41,7 +41,7 @@
           Bus.$emit("flush",true);
           this.flag=0;
         }else{
-          this.user=data;
+          this.user=data.message;
         }
       });
     },
