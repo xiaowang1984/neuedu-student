@@ -69,25 +69,10 @@
                 <tr>
                   <td>企业名称:</td>
                   <td>
-                    <input type="text" name="cName" autocomplete="off" class="none_border_text" list="job-position" placeholder="">
+                    <input type="text" name="cName" autocomplete="off" class="none_border_text" list="job-position" placeholder="" id="cName">
                     <datalist id="job-position">
                       <option v-for="company in companys">{{company.name}}</option>
                     </datalist>
-
-                    <a href="#" id="add_company_btn" title="添加公司"></a>
-                  </td>
-                </tr>
-                <tr>
-                  <td>选择岗位:</td>
-                  <td>
-                    <select class="select_postion" name="jId">
-                      <option v-for="job in jobs" :value="job.id">{{job.name}}</option>
-                    </select>
-                    <div class="il_learn_radio_group" style="display: inline-block;">
-                      <label style="font-size: 12px; margin-left: 2em;">
-                        <input type="checkbox" name="isSkill" value="0" /> 非技术岗
-                      </label>
-                    </div>
                   </td>
                 </tr>
                 <tr>
@@ -107,7 +92,7 @@
                   <td>面试时间:</td>
                   <td>
                     <div>
-                      <input class="none_border_text"  type="text" name="cDate" id="interview_time"/>
+                      <input class="none_border_text" type="text" name="cDate" id="interview_time"/>
                     </div>
                   </td>
                 </tr>
@@ -324,7 +309,7 @@
             this.companys=data.list;
           }
         });
-        getData({withPage:0,isDel:1},path2+"job/list",(data)=>{
+        getData({withPage:0,isDel:1,is_type:0},path2+"job/list",(data)=>{
           if(data.code==-1)
           {
             Bus.$emit("flush",true);
@@ -449,21 +434,29 @@
       methods:{
         add(){
           var self = this;
-          $('#add').ajaxSubmit({
-            url:path2+"employment/add",
-            type:"post",
-            async:false,
-            dataType:"json",
-            xhrFields:{
-              withCredentials:true
-            },
-            success:function(data){
-              if(data.code==1)
-                window.location.reload();
-              else
-                console.log(data.message);
-            }
-          });
+          // 表单验证
+          let cName = document.getElementById("cName").value;
+          let interviewTime = document.getElementById("interview_time").value;
+          if ((cName.trim() === null || cName.trim() === '') && (interviewTime.trim() === null || interviewTime.trim() === '')) {
+            alert('时间和企业名为必填项');
+          } else {
+            $('#add').ajaxSubmit({
+              url:path2+"employment/add",
+              type:"post",
+              async:false,
+              dataType:"json",
+              xhrFields:{
+                withCredentials:true
+              },
+              success:function(data){
+                if(data.code==1)
+                  window.location.reload();
+                else
+                  console.log(data.message);
+              }
+            });
+          }
+
         },
         getJobName(id){
           for(var i=0;i<this.jobs.length;i++){

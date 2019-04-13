@@ -19,7 +19,7 @@
               <a href="#" id="add_company_btn" title="添加公司"></a>
             </td>
           </tr>
-          <tr>
+          <!--<tr>
             <td>选择岗位:</td>
             <td>
               <select class="select_postion">
@@ -31,6 +31,31 @@
                   非技术岗
                 </label>
               </div>
+            </td>
+          </tr>-->
+          <tr>
+            <td>是否技术:</td>
+            <td>
+              <select class="select_postion" v-model="is_type">
+                <option value="0">是</option>
+                <option value="1">否</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td>岗位:</td>
+            <td>
+              <select class="select_postion">
+                <option v-if="job.is_type == is_type" v-for="job in jobs" :value="job.id">{{job.name}}</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td>方向:</td>
+            <td>
+              <select class="select_postion">
+                <option v-for="direction in directions" :value="direction.id">{{direction.fname}}</option>
+              </select>
             </td>
           </tr>
           <tr>
@@ -171,10 +196,12 @@
             id:"",
             companys:[],
             jobs:[],
+            directions:[],
             offeredit:{},
             teachers:[],
             id:0,
-            offerDate:""
+            offerDate:"",
+            is_type: 0
           }
         },
         created(){
@@ -190,13 +217,18 @@
               this.companys=data.list;
             }
           });
-          getData({withPage:0,isDel:1},path2+"job/list",(data)=>{
+          getData({"is_type": this.is_type, "withPage": 0, "isDel": 1},path2+"job/list",(data)=>{
             if(data.code==-1)
             {
               Bus.$emit("flush",true);
               Bus.$emit("val",0);
             }else{
               this.jobs=data.list;
+            }
+          });
+          getData({},path2 + "job/worktypelist",(data) => {
+            if (data.status === 0) {
+              this.directions = data.data;
             }
           });
           getData({withPage:0,isDel:1,type:3},path2+"teacher/list",(data)=>{
@@ -226,6 +258,7 @@
             this.$router.go(-1)
           },
           edit(){
+            console.log(this.offeredit)
             let _self=this;
             $.ajax({
               url:path2+"employment/edit",
