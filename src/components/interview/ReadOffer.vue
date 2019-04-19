@@ -19,20 +19,6 @@
               <a href="#" id="add_company_btn" title="添加公司"></a>
             </td>
           </tr>
-          <!--<tr>
-            <td>选择岗位:</td>
-            <td>
-              <select class="select_postion">
-                <option v-for="job in jobs" :value="job.id">{{job.name}}</option>
-              </select>
-              <div class="il_learn_radio_group" style="display: inline-block;">
-                <label style="font-size: 12px; margin-left: 2em;">
-                  <input  type="checkbox" name="insurance" :checked="offeredit.isSkill==0" @change="changeskill($event)" />
-                  非技术岗
-                </label>
-              </div>
-            </td>
-          </tr>-->
           <tr>
             <td>是否技术:</td>
             <td>
@@ -53,7 +39,7 @@
           <tr>
             <td>方向:</td>
             <td>
-              <select class="select_postion">
+              <select class="select_postion" v-model="offeredit.workType">
                 <option v-for="direction in directions" :value="direction.id">{{direction.fname}}</option>
               </select>
             </td>
@@ -76,6 +62,14 @@
             <td>
               <div>
                 <input class="none_border_text"  type="text" id="read_interview_time" v-model="offeredit.cDate"/>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>offer时间:</td>
+            <td>
+              <div>
+                <input class="none_border_text"  type="text"   v-model="offeredit.offerDate"/>
               </div>
             </td>
           </tr>
@@ -197,11 +191,14 @@
             companys:[],
             jobs:[],
             directions:[],
-            offeredit:{},
+            offeredit:{
+              workType:0
+            },
             teachers:[],
             id:0,
             offerDate:"",
-            is_type: 0
+            is_type: 0,
+
           }
         },
         created(){
@@ -247,6 +244,7 @@
               Bus.$emit("val",0);
             }else{
               this.offeredit=data;
+              console.log(data);
             }
           });
         },
@@ -258,8 +256,8 @@
             this.$router.go(-1)
           },
           edit(){
-            console.log(this.offeredit)
             let _self=this;
+            this.offeredit.offer=1;
             $.ajax({
               url:path2+"employment/edit",
               type:"post",

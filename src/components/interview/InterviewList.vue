@@ -33,7 +33,7 @@
                   <a href="javascript:void(0)" @click="read(employment.id)">查阅</a>
                 </template>
                 <template v-else>
-                  <a href="javascript:void(0)" @click="edit(employment.id)" class="add_link add_offer_link">添加</a>
+                  <a href="javascript:void(0)" @click="read(employment.id)" class="add_link add_offer_link">添加</a>
                 </template>
               </td>
               <td class="go_direction">
@@ -48,7 +48,7 @@
               </td>
               <td>
                 <template v-if="employment.choice==1">
-                  <span style="font-size:12px">{{employment.offerDate}}</span>
+                  <span style="font-size:12px">{{employment.workDate}}</span>
                 </template>
 
               </td>
@@ -122,7 +122,7 @@
                 <tr>
                   <td>设置时间:</td>
                   <td>
-                    <input type="text" name="offerDate" class="none_border_text" id="add_offer_time_box">
+                    <input type="text" name="workDate" class="none_border_text" id="add_offer_time_box">
                   </td>
                 </tr>
                 </tbody>
@@ -141,8 +141,8 @@
         <form id="update" method="post">
           <div class="modal_box">
             <div class="modal_title">
-              <h1 class="pull_left">新增 offer</h1>
-              <button class="close_btn pull_right"></button>
+              <h1 class="pull_left">查看/编辑详情</h1>
+              <button class="close_btn pull_right" @click="cancel()"></button>
             </div>
             <div class="modal_content">
               <table  class="il_table add_interview">
@@ -150,16 +150,64 @@
                 <tr>
                   <td>企业名称:</td>
                   <td>
-                    <input type="text" class="none_border_text" readonly="readonly" :value="offeredit.cName" placeholder="">
-                    <input type="hidden" :value="offeredit.id" name="id">
-                    <input type="hidden" value="1" name="offer">
-                    <!--<a href="#" id="add_company_btn" title="添加公司"></a>-->
+                    <input type="text" class="none_border_text" list="job-position" placeholder="" v-model="offeredit.cName">
+                    <datalist id="job-position">
+                      <option v-for="company in companys">{{company.name}}</option>
+                    </datalist>
+
+                    <a href="#" id="add_company_btn" title="添加公司"></a>
+                  </td>
+                </tr>
+                <tr>
+                  <td>是否技术:</td>
+                  <td>
+                    <select class="select_postion" v-model="is_type">
+                      <option value="0">是</option>
+                      <option value="1">否</option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>岗位:</td>
+                  <td>
+                    <select class="select_postion">
+                      <option v-if="job.is_type == is_type" v-for="job in jobs" :value="job.id">{{job.name}}</option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>方向:</td>
+                  <td>
+                    <select class="select_postion">
+                      <option v-for="direction in directions" :value="direction.id">{{direction.fname}}</option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>面试渠道:</td>
+                  <td>
+                    <div class="il_learn_radio_group">
+                      <label>
+                        <input  type="radio" name="channel" value="1" v-model="offeredit.type" /> 企业内推
+                      </label>
+                      <label>
+                        <input type="radio" name="channel" value="0"  v-model="offeredit.type"/> 自主寻找
+                      </label>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>面试时间:</td>
+                  <td>
+                    <div>
+                      <input class="none_border_text"  type="text" id="read_interview_time" v-model="offeredit.cDate"/>
+                    </div>
                   </td>
                 </tr>
                 <tr>
                   <td>实施经理:</td>
                   <td>
-                    <select class="select_postion" name="tId">
+                    <select class="select_postion" v-model="offeredit.tId">
                       <option v-for="teacher in teachers" :value="teacher.id">{{teacher.name}}</option>
                     </select>
                   </td>
@@ -168,13 +216,13 @@
                   <td colspan="2">
                     <div class="salary_box">
                       <div class="salary">
-                        <label>试用期薪资:</label><input name="probation" :value="offeredit.probation" class="none_border_text" placeholder="" type="text" />
+                        <label>试用期薪资:</label><input class="none_border_text" placeholder="" type="text" v-model="offeredit.probation" />
                       </div>
                       <div class="salary">
-                        <label>实习薪资:</label><input name="practice" :value="offeredit.practice" class="none_border_text" placeholder="" type="text" />
+                        <label>实习薪资:</label><input class="none_border_text" placeholder="" type="text" v-model="offeredit.practice"/>
                       </div>
                       <div class="salary">
-                        <label>转正薪资:</label><input name="salary" :value="offeredit.salary" class="none_border_text" placeholder="" type="text" />
+                        <label>转正薪资:</label><input class="none_border_text" placeholder="" type="text" v-model="offeredit.salary" />
                       </div>
                     </div>
                   </td>
@@ -184,16 +232,16 @@
                   <td>
                     <div class="il_learn_radio_group">
                       <label>
-                        <input type="radio" name="insurance" value="1" /> 三险
+                        <input type="radio" name="insurance" value="1" v-model="offeredit.insurance"/> 三险
                       </label>
                       <label>
-                        <input type="radio" name="insurance" value="2"/> 五险
+                        <input type="radio" name="insurance" value="2" v-model="offeredit.insurance"/> 五险
                       </label>
                       <label>
-                        <input type="radio" name="insurance" value="3"/> 六险
+                        <input type="radio" name="insurance" value="3" v-model="offeredit.insurance" /> 六险
                       </label>
                       <label>
-                        <input type="radio" name="insurance" value="0" /> 无
+                        <input type="radio" name="insurance" value="0" v-model="offeredit.insurance"/> 无
                       </label>
                     </div>
                   </td>
@@ -203,10 +251,13 @@
                   <td>
                     <div class="il_learn_radio_group">
                       <label>
-                        <input type="radio" name="fund" value="1" /> 一金
+                        <input type="radio" name="fund" value="1" v-model="offeredit.fund" /> 一金
                       </label>
                       <label>
-                        <input type="radio" name="fund" value="0" /> 无
+                        <input type="radio" name="fund" value="2" v-model="offeredit.fund"  /> 补充公积金
+                      </label>
+                      <label>
+                        <input type="radio" name="fund" value="0" v-model="offeredit.fund"  /> 无
                       </label>
                     </div>
                   </td>
@@ -216,16 +267,16 @@
                   <td>
                     <div class="il_learn_radio_group">
                       <label>
-                        <input type="radio" name="month" value="1" /> 12
+                        <input type="radio" name="p_number" value="1" v-model="offeredit.month" /> 12
                       </label>
                       <label>
-                        <input type="radio" name="month" value="2"/> 13
+                        <input type="radio" name="p_number" value="2"  v-model="offeredit.month"/> 13
                       </label>
                       <label>
-                        <input type="radio" name="month" value="3"/> 14
+                        <input type="radio" name="p_number" value="3"  v-model="offeredit.month"/> 14
                       </label>
                       <label>
-                        <input type="radio" name="month" value="0"/> 其他
+                        <input type="radio" name="p_number" value="0"  v-model="offeredit.month"/> 其他
                       </label>
                     </div>
                   </td>
@@ -235,10 +286,10 @@
                   <td>
                     <div class="il_learn_radio_group">
                       <label>
-                        <input type="radio" name="stock" value="1" /> 有
+                        <input  type="radio" name="option" value="1" v-model="offeredit.stock" /> 有
                       </label>
                       <label>
-                        <input type="radio" name="stock" value="0" /> 无
+                        <input type="radio" name="option" value="0" v-model="offeredit.stock"/> 无
                       </label>
                     </div>
                   </td>
@@ -246,7 +297,7 @@
                 <tr>
                   <td>福利待遇:</td>
                   <td>
-                    <input type="text" style="width: 270px;" name="other" class="none_border_text"  />
+                    <input type="text" style="width: 270px;" class="none_border_text" v-model="offeredit.other"  />
                   </td>
                 </tr>
                 </tbody>
@@ -254,8 +305,8 @@
             </div>
             <div class="modal_footer">
               <div class="pull_right add_view_btn_group">
-                <button type="reset" class="il_btn cancel_view_btn">取消</button>
-                <button @click="update()" type="button" class="il_btn add_view_btn">确定</button>
+                <button class="il_btn cancel_view_btn" @click="cancel()">取消</button>
+                <button class="il_btn add_view_btn" @click="edit()">确定</button>
               </div>
             </div>
           </div>
@@ -296,7 +347,9 @@
           },
           teachers:[],
           id:0,
-          offerDate:""
+          offerDate:"",
+          is_type:0,
+          directions:1
         }
       },
       created(){
@@ -398,12 +451,12 @@
           interview_modal.show();
         })
 
-      if( document.querySelector(".add_offer_link")){
+     /* if( document.querySelector(".add_offer_link")){
           $(".add_offer_link").click(function(e){
             e.preventDefault();
             offer_modal.show();
           });
-        }
+        }*/
 
 
        /* //绑定单击事件
