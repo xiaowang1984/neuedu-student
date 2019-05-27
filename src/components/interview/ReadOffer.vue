@@ -32,7 +32,7 @@
             <td>岗位:</td>
             <td>
               <select class="select_postion">
-                <option v-if="job.is_type == is_type" v-for="job in jobs" :value="job.id">{{job.name}}</option>
+                <option  v-for="job in jobs" v-model="offeredit.jId">{{job.name}}</option>
               </select>
             </td>
           </tr>
@@ -69,7 +69,7 @@
             <td>offer时间:</td>
             <td>
               <div>
-                <input class="none_border_text"  type="text"   v-model="offeredit.offerDate"/>
+                <input class="none_border_text"  type="text" id="read_offer_date"   v-model="offeredit.offerDate"/>
               </div>
             </td>
           </tr>
@@ -246,6 +246,12 @@
               this.offeredit=data;
               console.log(data);
             }
+          });
+          laydate({
+            elem: document.getElementById("read_interview_time")
+          });
+          laydate({
+            elem: document.getElementById("read_offer_date")
           });
         },
         methods:{

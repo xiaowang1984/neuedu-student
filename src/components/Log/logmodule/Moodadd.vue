@@ -84,27 +84,32 @@
       methods:{
         cli(){
           var self = this;
-          $('#fm').ajaxSubmit({
-            url:path2+"student/logsave",
-            type:"post",
-            async:false,
-            dataType:"json",
-            xhrFields:{
-              withCredentials:true
-            },
-            success:function(data){
-              if(data.code==-1){
-                Bus.$emit("flush",false);
-                Bus.$emit("val",0);
+          if(this.moodcode==0){
+            alert("请选择心情")
+          }else{
+            $('#fm').ajaxSubmit({
+              url:path2+"student/logsave",
+              type:"post",
+              async:false,
+              dataType:"json",
+              xhrFields:{
+                withCredentials:true
+              },
+              success:function(data){
+                if(data.code==-1){
+                  Bus.$emit("flush",false);
+                  Bus.$emit("val",0);
+                }
+                else if(data.code==1){
+                  alert("保存完成");
+                  window.location.reload();
+                }
+                else
+                  console.log(data.message);
               }
-              else if(data.code==1){
-                alert("保存完成");
-                window.location.reload();
-              }
-              else
-                console.log(data.message);
-            }
-          });
+            });
+          }
+
         }
       }
     }
